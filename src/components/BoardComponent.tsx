@@ -49,7 +49,7 @@ const BoardComponent: FC<IBoardProps> = ({ board, setBoard, currentPlayer, swapP
   return (
     <div>
       {
-        isCheckMateState[0] && <h1 style={{ color: "#fff", textAlign: "center", padding: 20 }}>{
+        isCheckMateState[0] && <h1 style={{}}>{
           isCheckMateState[1] === Colors.BLACK
             ? "Білі  " : "Чорні  "
         } Перемогли</h1>
