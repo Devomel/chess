@@ -7,8 +7,8 @@ import { Player } from "./models/Player";
 import { LostFiguresList } from "./components/LostFiguresList";
 function App() {
   const [board, setBoard] = useState(new Board())
-  const [whitePlayer, setWhitePlayer] = useState<Player | null>(new Player(Colors.WHITE))
-  const [blackPlayer, setBlackPlayer] = useState<Player | null>(new Player(Colors.BLACK))
+  const [whitePlayer, _setWhitePlayer] = useState<Player | null>(new Player(Colors.WHITE))
+  const [blackPlayer, _setBlackPlayer] = useState<Player | null>(new Player(Colors.BLACK))
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(whitePlayer)
   useEffect(() => {
     restart()
