@@ -8,6 +8,7 @@ import { Knight } from "./figures/Knight";
 import { Pawn } from "./figures/Pawn";
 import { Queen } from "./figures/Queen";
 import { Rook } from "./figures/Rook";
+import { Player } from "./Player";
 
 export class Board {
   isCheckMate: [boolean, Colors | null] = [false, null]
@@ -17,6 +18,7 @@ export class Board {
   currentPlayer: Colors = Colors.WHITE
   lostWhiteFigures: Figure[] = []
   lostBlackFigures: Figure[] = []
+  fen: string = ""
   public initCells() {
     for (let i = 0; i < 8; i++) {
       const row: Cell[] = [];
@@ -59,6 +61,35 @@ export class Board {
     new Queen(Colors.WHITE, this.getCell(3, 7))
   }
 
+
+  public changeFENPosition(currentPlayer: Player | null) {
+    const res = [];
+    for (let y = 0; y < this.cells.length; y++) {
+      let row: (string | number)[] = []
+      for (let x = 0; x < this.cells.length; x++) {
+        let itemForFEN;
+        let figure = this.cells[y][x].figure
+        if (figure) {
+          figure?.color === Colors.BLACK
+            ? itemForFEN = figure.name.charAt(0).toLowerCase()
+            : itemForFEN = figure.name.charAt(0).toUpperCase()
+          row.push(itemForFEN)
+        } else {
+          let lastRowItem = row[row.length - 1]
+          if (typeof lastRowItem === "number") {
+            row[row.length - 1] = lastRowItem + 1
+          }
+          else {
+            itemForFEN = 1
+            row.push(itemForFEN)
+          }
+        }
+      }
+      res.push(row.join(""))
+    }
+    this.fen = res.join("/") + ` ${currentPlayer?.color.charAt(0).toLowerCase() === "w" ? "b" : "w"}` + " - - 0 1"
+    console.log(this.fen)
+  }
   public changeKingPosition(target: Cell, color: Colors) {
     color === Colors.BLACK
       ? this.blackKingPosition = [target.x, target.y]
@@ -103,7 +134,6 @@ export class Board {
             selectedCell.figure = previousSelectedCellFigure;
             target.figure = previousTargetFigure;
             if (!isUnderAttack) {
-              console.log(selectedCell, colorPlayer)
               return false;
             }
           }

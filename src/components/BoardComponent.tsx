@@ -13,15 +13,27 @@ interface IBoardProps {
 }
 
 const BoardComponent: FC<IBoardProps> = ({ board, setBoard, currentPlayer, swapPlayer }) => {
+
+
+  const [fen, setFen] = useState<string>("")
+  const [evaluation, setEvaluation] = useState(0)
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null)
   const [isCheckMateState, setIsCheckmate] = useState(board.isCheckMate)
   useEffect(() => {
     highlightCells()
   }, [selectedCell])
-
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("https://stockfish.online/api/s/v2.php?depth=12&fen=" + fen)
+      const data = await response.json();
+      setEvaluation(data.evaluation)
+    })()
+  }, [fen])
   const clickOnCell = (cell: Cell) => {
     if (selectedCell && selectedCell != cell && selectedCell.figure?.canMove(cell) && cell.available) {
       selectedCell.moveFigure(cell)
+      board.changeFENPosition(currentPlayer)
+      setFen(board.fen)
       if (currentPlayer) board.checkIsCheckMate(currentPlayer.color)
       if (board.isCheckMate[0]) {
         setIsCheckmate(board.isCheckMate)
@@ -34,8 +46,6 @@ const BoardComponent: FC<IBoardProps> = ({ board, setBoard, currentPlayer, swapP
         setSelectedCell(cell)
       }
     }
-
-
   }
 
   const highlightCells = () => {
@@ -49,14 +59,13 @@ const BoardComponent: FC<IBoardProps> = ({ board, setBoard, currentPlayer, swapP
   return (
     <div>
       {
-        isCheckMateState[0] && <h1 style={{}}>{
+        isCheckMateState[0] && <h1>{
           isCheckMateState[1] === Colors.BLACK
             ? "Білі  " : "Чорні  "
         } Перемогли</h1>
       }
-
+      <h1>Оцінка позиції: {evaluation}</h1>
       <div className="board">
-
         {
           board.cells.map((row, index) =>
             <Fragment key={index}>
