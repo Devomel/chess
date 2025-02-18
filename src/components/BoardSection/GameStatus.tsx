@@ -14,7 +14,7 @@ export const GameStatus: FC<IGameStatusProps> = ({ isCheckMateState, evaluation 
                {isCheckMateState[1] === Colors.BLACK ? "Білі " : "Чорні "} Перемогли
             </h1>
          )}
-         <h1>Оцінка позиції: {evaluation}</h1>
+         <h1>Position assessment: {evaluation}</h1>
       </div>
    );
 };
